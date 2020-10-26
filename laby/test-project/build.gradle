@@ -1,0 +1,17 @@
+group 'pl.edu.agh.to2'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'java'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_14
+    targetCompatibility = JavaVersion.VERSION_14
+}
+
+dependencies {
+    implementation group: 'io.reactivex.rxjava3', name: 'rxjava', version: '3.0.6'
+}
