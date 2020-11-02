@@ -33,3 +33,4 @@ build/
 *.dat
 gradlew*
 *.xml
+*.pptx
