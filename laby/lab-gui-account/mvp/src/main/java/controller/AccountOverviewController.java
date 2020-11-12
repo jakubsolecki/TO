@@ -37,6 +37,9 @@ public class AccountOverviewController {
 
 	@FXML
 	private Button deleteButton;
+
+	@FXML
+	private Button editButton;
 	
 	@FXML
 	private void initialize() {
@@ -48,7 +51,11 @@ public class AccountOverviewController {
 		inflowColumn.setCellValueFactory(dataValue -> dataValue.getValue().getInflowProperty());
 		
 		deleteButton.disableProperty().bind(Bindings.isEmpty(transactionsTable.getSelectionModel().getSelectedItems()));
-	}	
+
+		editButton.disableProperty().bind(
+				Bindings.size(transactionsTable.getSelectionModel().getSelectedItems()).isNotEqualTo(1)
+		);
+	}
 
 	@FXML
 	private void handleDeleteAction(ActionEvent event) {
