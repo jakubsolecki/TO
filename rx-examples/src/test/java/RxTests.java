@@ -40,7 +40,11 @@ public class RxTests {
      */
     @Test
     public void loadMoviesAsStreamAndHandleError() {
+        var movieReader = new MovieReader();
 
+        movieReader.getMoviesAsStream("nonexisting DB")
+                .subscribe(movie -> print(movie, Color.GREEN),
+                        error -> print("Nie pykło: " + error, Color.MAGENTA));
     }
 
     /**
@@ -48,7 +52,13 @@ public class RxTests {
      */
     @Test
     public void loadMoviesAsStreamAndFinishWithMessage() {
+        var movieReader = new MovieReader();
 
+        movieReader.getMoviesAsStream(MOVIES1_DB)
+                .take(10)
+                .subscribe(movie -> print(movie, Color.GREEN),
+                        error -> print("Nie pykło: " + error, Color.MAGENTA),
+                        () -> print("The end!", Color.BLUE));
     }
 
     /**

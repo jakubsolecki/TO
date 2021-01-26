@@ -41,7 +41,7 @@ public class MovieReader {
 
     private void readMovies(String moviesDb, ObservableEmitter<Movie> observer) throws FileNotFoundException {
         try (Scanner reader = new Scanner(getDbFile(moviesDb))) {
-            while (reader.hasNextLine()) {
+            while (reader.hasNextLine() && !observer.isDisposed()) {
                 String filmLine = reader.nextLine();
                 String[] lineSplit = filmLine.split("\t");
 
