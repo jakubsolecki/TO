@@ -107,6 +107,16 @@ public class RxTests {
      */
     @Test
     public void loadMoviesFromManySources() {
+        var movieReader = new MovieReader();
+
+        Observable<Movie> movies1 = movieReader.getMoviesAsStream(MOVIES1_DB)
+                .doOnNext(movie -> print(movie, Color.RED));
+
+        Observable<Movie> movies2 = movieReader.getMoviesAsStream(MOVIES2_DB)
+                .doOnNext(movie -> print(movie, Color.BLUE));
+
+        Observable.merge(movies1, movies2)
+                .subscribe(movie -> print("RECEIVED: " + movie, Color.GREEN));
 
     }
 
