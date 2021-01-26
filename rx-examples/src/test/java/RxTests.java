@@ -66,7 +66,11 @@ public class RxTests {
      */
     @Test
     public void displayLongMovies() {
+        var movieReader = new MovieReader();
 
+        movieReader.getMoviesAsStream(MOVIES1_DB)
+                .filter(movie -> movie.getLength() > 150)
+                .subscribe(movie -> print(movie, Color.GREEN));
     }
 
     /**
@@ -74,7 +78,14 @@ public class RxTests {
      */
     @Test
     public void displaySortedMoviesTitles() {
+        var movieReader = new MovieReader();
 
+        movieReader.getMoviesAsStream(MOVIES1_DB)
+                .map(Movie::getDescription)
+//                .take(10) // takes first 10 elements BEFORE sorting them
+                .sorted() // caches all elements in order to sort them later
+                .take(10) // takes first 10 elements AFTER they are sorted
+                .subscribe(description -> print(description, Color.GREEN));
     }
 
     /**
