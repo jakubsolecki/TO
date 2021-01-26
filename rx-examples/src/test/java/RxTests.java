@@ -1,4 +1,6 @@
 import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.core.Scheduler;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.junit.jupiter.api.Test;
 import util.Color;
 
@@ -117,15 +119,21 @@ public class RxTests {
 
         Observable.merge(movies1, movies2)
                 .subscribe(movie -> print("RECEIVED: " + movie, Color.GREEN));
-
     }
 
     /**
      * Example 9: Playing with threads (subscribeOn).
      */
     @Test
-    public void loadMoviesInBackground() {
+    public void loadMoviesInBackground() throws InterruptedException {
+        var movieReader = new MovieReader();
 
+        movieReader.getMoviesAsStream(MOVIES1_DB)
+                .subscribeOn(Schedulers.newThread())
+                .doOnNext(movie -> printThread(movie.getIndex(), Color.BLUE))
+                .subscribe(movie -> printThread(movie.getIndex(), Color.GREEN));
+        print("The end", Color.RED);
+        Thread.sleep(10000);
     }
 
     /**
@@ -140,9 +148,23 @@ public class RxTests {
      * Example 11: Combining parallel streams.
      */
     @Test
-    public void loadMoviesFromManySourcesParallel() {
+    public void loadMoviesFromManySourcesParallel() throws InterruptedException {
         // Static merge solution
+        var movieReader = new MovieReader();
 
+        Observable<Movie> movies1 = movieReader.getMoviesAsStream(MOVIES1_DB)
+                .subscribeOn(Schedulers.io())
+                .doOnNext(movie -> print(movie, Color.RED));
+
+        Observable<Movie> movies2 = movieReader.getMoviesAsStream(MOVIES2_DB)
+                .subscribeOn(Schedulers.io())
+                .doOnNext(movie -> print(movie, Color.BLUE));
+
+//        Observable.merge(movies1, movies2)
+        Observable.concat(movies1, movies2)
+                .subscribe(movie -> print("RECEIVED: " + movie, Color.GREEN));
+
+        Thread.sleep(10000);
 
 
         // FlatMap solution:
