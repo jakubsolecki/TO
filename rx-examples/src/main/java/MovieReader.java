@@ -19,7 +19,7 @@ public class MovieReader {
     }
 
     public Observable<Movie> getMoviesAsStream(String moviesDb) {
-        return Observable.create()
+        return null;
     }
 
     private List<Movie> readMovies(String moviesDb) throws FileNotFoundException {

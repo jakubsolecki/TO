@@ -18,8 +18,10 @@ public class RxTests {
      */
     @Test
     public void loadMoviesAsList() throws FileNotFoundException {
-        Observable.just("Hello RX")
-                .subscribe(System.out::println);
+        var movieReader = new MovieReader();
+
+        movieReader.getMoviesFromList(MOVIES1_DB)
+                .subscribe(movie -> print(movie, Color.GREEN));
     }
 
     /**
