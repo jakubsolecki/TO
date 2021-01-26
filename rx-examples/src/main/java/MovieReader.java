@@ -19,7 +19,7 @@ public class MovieReader {
     }
 
     public Observable<Movie> getMoviesAsStream(String moviesDb) {
-        return null;
+        return Observable.create(emitter -> readMovies(moviesDb, emitter));
     }
 
     private List<Movie> readMovies(String moviesDb) throws FileNotFoundException {
@@ -40,7 +40,19 @@ public class MovieReader {
     }
 
     private void readMovies(String moviesDb, ObservableEmitter<Movie> observer) throws FileNotFoundException {
-        // TODO in Example 2
+        try (Scanner reader = new Scanner(getDbFile(moviesDb))) {
+            while (reader.hasNextLine()) {
+                String filmLine = reader.nextLine();
+                String[] lineSplit = filmLine.split("\t");
+
+                Movie movie = new Movie(Integer.parseInt(lineSplit[0]), lineSplit[1], lineSplit[2], Integer.parseInt(lineSplit[3]),
+                        Integer.parseInt(lineSplit[4]), lineSplit[5]);
+
+                System.out.println("MOVIE LOADED: " + movie);
+                observer.onNext(movie);
+            }
+            observer.onComplete();
+        }
     }
 
     public List<Actor> readActors(Movie movie) throws FileNotFoundException {

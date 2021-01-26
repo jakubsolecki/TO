@@ -29,7 +29,10 @@ public class RxTests {
      */
     @Test
     public void loadMoviesAsStream() {
+        var movieReader = new MovieReader();
 
+        movieReader.getMoviesAsStream(MOVIES1_DB)
+                .subscribe(movie -> print(movie, Color.GREEN));
     }
 
     /**
