@@ -93,7 +93,13 @@ public class RxTests {
      */
     @Test
     public void displayActorsForMovies() {
+        var movieReader = new MovieReader();
 
+        movieReader.getMoviesAsStream(MOVIES1_DB)
+                .flatMap(movie -> Observable.fromIterable(movieReader.readActors(movie)))
+                .distinct()
+                .sorted()
+                .subscribe(actors -> print(actors, Color.GREEN));
     }
 
     /**
