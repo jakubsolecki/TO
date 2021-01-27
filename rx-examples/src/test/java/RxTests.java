@@ -152,24 +152,33 @@ public class RxTests {
         // Static merge solution
         var movieReader = new MovieReader();
 
-        Observable<Movie> movies1 = movieReader.getMoviesAsStream(MOVIES1_DB)
-                .subscribeOn(Schedulers.io())
-                .doOnNext(movie -> print(movie, Color.RED));
-
-        Observable<Movie> movies2 = movieReader.getMoviesAsStream(MOVIES2_DB)
-                .subscribeOn(Schedulers.io())
-                .doOnNext(movie -> print(movie, Color.BLUE));
-
-//        Observable.merge(movies1, movies2)
-        Observable.concat(movies1, movies2)
-                .subscribe(movie -> print("RECEIVED: " + movie, Color.GREEN));
-
-        Thread.sleep(10000);
+//        Observable<Movie> movies1 = movieReader.getMoviesAsStream(MOVIES1_DB)
+//                .subscribeOn(Schedulers.io())
+//                .doOnNext(movie -> print(movie, Color.RED));
+//
+//        Observable<Movie> movies2 = movieReader.getMoviesAsStream(MOVIES2_DB)
+//                .subscribeOn(Schedulers.io())
+//                .doOnNext(movie -> print(movie, Color.BLUE));
+//
+////        Observable.merge(movies1, movies2)
+//        Observable.concat(movies1, movies2)
+//                .subscribe(movie -> print("RECEIVED: " + movie, Color.GREEN));
+//
+//        Thread.sleep(10000);
 
 
         // FlatMap solution:
         final MovieDescriptor movie1Descriptor = new MovieDescriptor(MOVIES1_DB, Color.GREEN);
         final MovieDescriptor movie2Descriptor = new MovieDescriptor(MOVIES2_DB, Color.BLUE);
+
+        Observable.just(movie1Descriptor, movie2Descriptor)
+//                .map(db -> movieReader.getMoviesAsStream(db)) // Observable<Observable<Movie>>
+                .concatMap(db -> movieReader.getMoviesAsStream(db.movieDbFilename)
+                        .doOnNext(movie -> print(movie, db.debugColor))
+                        .subscribeOn(Schedulers.io())) // every "pip" on different thread
+                .subscribe(movie -> print("RECEIVED: " + movie, Color.RED));
+
+        Thread.sleep(10000);
 
     }
 
