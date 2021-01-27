@@ -1,3 +1,4 @@
+import io.reactivex.rxjava3.core.BackpressureStrategy;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -195,7 +196,16 @@ public class RxTests {
      */
     @Test
     public void trackMoviesLoadingWithBackpressure() {
+        var movieReader = new MovieReader();
 
+        movieReader.getMoviesAsStream(MOVIES1_DB)
+                .doOnNext(movie -> print(movie, Color.RED))
+                .doOnNext(movie -> Thread.sleep(10))
+                .subscribeOn(Schedulers.newThread())
+                .toFlowable(BackpressureStrategy.LATEST) // comment line to see the problem
+                .observeOn(Schedulers.io(), true, 1)
+                .doOnNext(this::displayProgress)
+                .blockingSubscribe();
     }
 
     /**
